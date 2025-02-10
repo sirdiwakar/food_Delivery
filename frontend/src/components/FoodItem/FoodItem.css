@@ -52,16 +52,16 @@
 .food-item-img-container .add{
     width: 35px;
     position: absolute;
-    bottom: 15px;
-    right: 15px;
+    bottom: 10%;
+    right: 10%;
     cursor: pointer;
     border-radius: 50%;
 }
 
 .food-item-counter{
     position: absolute;
-    bottom: 15px;
-    right: 15px;
+    bottom: 10%;
+    right: 10%;
     display: flex;
     align-items: center;
     gap: 7px;
