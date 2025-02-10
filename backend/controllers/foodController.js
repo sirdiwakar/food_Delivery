@@ -41,7 +41,7 @@ export const removeFood = async(req, res) => {
         });
 
         await foodModel.findByIdAndDelete(id);
-        res.status(200).json({success: true, message: "Food Remove"});
+        res.status(200).json({success: true, message: "Food Removed"});
     }catch(error){
         res.status(500).json({success: false, message: "Error Removing the food"});
     }
