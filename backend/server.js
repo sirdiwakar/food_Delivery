@@ -8,6 +8,7 @@ import 'dotenv/config'
 const app = express();
 const port = process.env.PORT || 4000;
 import { connectDB } from "./config/db.js";
+import cartRouter from "./routes/cartRoute.js";
  
 //middleware
 app.use(express.json());
@@ -22,6 +23,7 @@ await connectDB();
 app.use('/api/food', foodRouter);
 app.use('/images', express.static('uploads'));
 app.use('/api/user', userRouter);
+app.use('/api/cart', cartRouter);
 
 app.get('/', (req, res) => {
     res.status(200).send('App Working');
