@@ -10,7 +10,7 @@ const razorInstance = new Razorpay({
 
 //placing user order from FE
 export const placeOrder = async (req, res) => {
-    const frontend_url = "http://localhost:5174";
+    const frontend_url = "https://food-delivery-frontend-qful.onrender.com";
     try {
         const newOrder = new orderModel({
             userId: req.body.userId,
