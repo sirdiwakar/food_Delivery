@@ -1,27 +1,111 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../context/StoreContext'
+import axios from 'axios'
+
 const PlaceOrder = () => {
-  const {getTotalCartAmount} = useContext(StoreContext)
+  const {getTotalCartAmount, token, food_list, cartItems, url} = useContext(StoreContext);
+  const [data, setData]= useState({
+    firstName:"",
+    lastName:"",
+    email:"",
+    street:"",
+    city:"",
+    state:"",
+    zipcode:"",
+    country:"",
+    phone:""
+  });
+
+  const onChangeHandler = (event)=>{
+    const name = event.target.name;
+    const value = event.target.value;
+    setData(data=>({...data, [name]:value}));
+  }
+
+  const placeOrder = async (event) =>{
+    event.preventDefault();
+    let orderItems = [];
+    food_list.map((item)=>{
+      if(cartItems[item._id]){
+        let itemInfo = item;
+        itemInfo["quantity"] = cartItems[item._id];
+        orderItems.push(itemInfo);
+      }
+    });
+    let orderData = {
+      address: data,
+      items: orderItems,
+      amount: getTotalCartAmount() + 12
+    }
+    try{
+      const response = await axios.post(`${url}/api/order/place`, orderData, {headers: {token}});
+      if(response.data.success){
+        const {order_id, amount, currency, key, order_db_id} = response.data;
+        const options = {
+          key: key,
+          amount: amount,
+          currency: currency,
+          name: "Food Delivery",
+          description: "Complete your order payment",
+          order_id: order_id,
+          handler: async function (response) {
+            try {
+              const verifyResponse = await axios.post(`${url}/api/order/verify-payment`, {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                order_db_id: order_db_id
+              });
+
+              if (verifyResponse.data.success) {
+                alert("Payment Successful!");
+                navigate("/myorders");
+              } else {
+                alert("Payment verification failed.");
+                navigate("/");
+              }
+            } catch (err) {
+              alert("Error verifying payment.");
+            }
+          },
+          prefill: {
+            name: `${data.firstName} ${data.lastName}`,
+            email: data.email,
+            contact: data.phone
+          },
+          theme: {color: "#3399cc"}
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      }else{
+        alert("Error processing order")
+      }
+    }catch(err){
+      console.log(err);
+      alert("Payment failed. Please try again");
+    }
+  }
+
   return (
-    <form className='place-order'>
+    <form onSubmit={placeOrder} className='place-order'>
       <div className="place-order-left">
         <p className='title'>Delivery Information</p>
         <div className="multi-fields">
-          <input type="text" placeholder='First Name' />
-          <input type="text" placeholder='Last Name' />
+          <input required onChange={onChangeHandler} name="firstName" value={data.firstName} type="text" placeholder='First Name' />
+          <input required onChange={onChangeHandler} name="lastName" value={data.lastName} type="text" placeholder='Last Name' />
         </div>
-        <input type="text" placeholder='Email address' />
-        <input type="text" placeholder='Street' />
+        <input required onChange={onChangeHandler} name="email" value={data.email} type="text" placeholder='Email address' />
+        <input required onChange={onChangeHandler} name="street" value={data.street} type="text" placeholder='Street' />
         <div className="multi-fields">
-          <input type="text" placeholder='City' />
-          <input type="text" placeholder='State' />
+          <input required onChange={onChangeHandler} name="city" value={data.city} type="text" placeholder='City' />
+          <input required onChange={onChangeHandler} type="text" name="state" value={data.state} placeholder='State' />
         </div>
         <div className="multi-fields">
-          <input type="text" placeholder='Zip Code' />
-          <input type="text" placeholder='Country' />
+          <input required onChange={onChangeHandler} name="zipcode" value={data.zipcode} type="text" placeholder='Zip Code' />
+          <input required onChange={onChangeHandler} name="country" value={data.country} type="text" placeholder='Country' />
         </div>
-        <input type="text" placeholder='Phone Number' />
+        <input required onChange={onChangeHandler} name="phone" value={data.phone} type="text" placeholder='Phone Number' />
       </div>
       <div className="place-order-right">
         <div className="cart-total">
@@ -42,7 +126,7 @@ const PlaceOrder = () => {
               <b>${getTotalCartAmount()===0?0:getTotalCartAmount() + 2}</b>
             </div> 
           </div>
-          <button onClick={() => navigate('/order')}>Proceed to payment</button>
+          <button type="submit">Proceed to payment</button>
         </div>
       </div>
     </form>
