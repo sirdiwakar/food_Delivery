@@ -10,7 +10,7 @@ const razorInstance = new Razorpay({
 
 //placing user order from FE
 export const placeOrder = async (req, res) => {
-    const frontend_url = "http://localhost:5173";
+    const frontend_url = "http://localhost:5174";
     try {
         const newOrder = new orderModel({
             userId: req.body.userId,
