@@ -52,7 +52,7 @@ export const verifyPayment = async (req, res) => {
             .digest("hex");
 
         if (generated_signature === razorpay_signature) {
-            await orderModel.findByIdAndUpdate(order_db_id, { status: "will be delivered soon", payment: true, paymentId: razorpay_payment_id });
+            await orderModel.findByIdAndUpdate(order_db_id, { status: "working on your order", payment: true, paymentId: razorpay_payment_id });
             return res.json({ success: true, message: "Payment verified successfully." });  // Only send one response
         } else {
             await orderModel.findByIdAndDelete(order_db_id);
@@ -73,6 +73,30 @@ export const userOrders = async(req, res) => {
             success: true,
             data: orders
         });
+    }catch(err){
+        console.log(err);
+        res.json({success: false, message: "Error"});
+    }
+}
+
+// Listing orders for adming panel
+export const listOrders = async(req, res) => {
+    try{    
+        const orders = await orderModel.find({});
+        res.json({success: true, data: orders});
+    }catch(err){
+        console.log(err);
+        res.json({success: false, message: "Error"});
+    }
+
+}
+
+
+// api for updating order status
+export const updateStatus = async (req, res) => {
+    try{
+        await orderModel.findByIdAndUpdate(req.body.orderId, {status: req.body.status});
+        res.json({success: true, message: "Status Updated"});
     }catch(err){
         console.log(err);
         res.json({success: false, message: "Error"});
