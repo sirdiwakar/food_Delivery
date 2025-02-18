@@ -62,3 +62,19 @@ export const verifyPayment = async (req, res) => {
         return res.json({ success: false, message: "Payment verification failed." });  // Only send one response
     }
 };
+
+
+// user orders for frontend
+
+export const userOrders = async(req, res) => {
+    try{
+        const orders = await orderModel.find({userId: req.body.userId});
+        res.json({
+            success: true,
+            data: orders
+        });
+    }catch(err){
+        console.log(err);
+        res.json({success: false, message: "Error"});
+    }
+}
