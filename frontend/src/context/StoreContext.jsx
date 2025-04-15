@@ -66,6 +66,9 @@ export const StoreContextProvider = (props) => {
                 setToken(localStorage.getItem("token"));
                 await loadCartData(localStorage.getItem("token"));
             }
+            if(localStorage.getItem("email")){
+                setEmail(localStorage.getItem("email"));
+            }
         })();
     }, [])
 
