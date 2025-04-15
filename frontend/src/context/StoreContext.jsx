@@ -8,6 +8,7 @@ export const StoreContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const url = "https://food-delivery-backend-dai4.onrender.com";
     const [token, setToken] = useState("");
+    const [email, setEmail] = useState(null);
     const [food_list, setFoodlist] = useState([]);
 
 
@@ -78,6 +79,8 @@ export const StoreContextProvider = (props) => {
         url,
         token,
         setToken,
+        email,
+        setEmail,
     }
 
     return (

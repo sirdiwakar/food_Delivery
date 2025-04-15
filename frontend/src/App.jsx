@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './components/Navbar/Navbar'
 import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home/Home'
@@ -7,11 +7,21 @@ import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
 import Footer from './components/Footer/Footer'
 import LoginPopup from './components/LoginPopup/LoginPopup'
 import MyOrders from './pages/MyOrders/MyOrders'
-import { loadUsetifulScript } from 'usetiful-sdk'
+import { loadUsetifulScript, setUsetifulTags } from 'usetiful-sdk'
 
 const App = () => {
+
+  const {email} = useContext(StoreContext);
+
   const[showLogin, setShowLogin] = useState(false);
   loadUsetifulScript('29a659c759679c9a241a77437c320ca3', {identifyUser: true})
+  useEffect(() => {
+    if(email){
+      setUsetifulTags({
+        userId: response.data.email,
+      })
+    }
+  }, [showLogin])
   return (
     <>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
