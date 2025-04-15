@@ -7,8 +7,11 @@ import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
 import Footer from './components/Footer/Footer'
 import LoginPopup from './components/LoginPopup/LoginPopup'
 import MyOrders from './pages/MyOrders/MyOrders'
+import { loadUsetifulScript } from 'usetiful-sdk'
+
 const App = () => {
-  const[showLogin, setShowLogin] = useState(false)
+  const[showLogin, setShowLogin] = useState(false);
+  loadUsetifulScript('29a659c759679c9a241a77437c320ca3', {identifyUser: true})
   return (
     <>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}

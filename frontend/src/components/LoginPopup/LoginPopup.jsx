@@ -3,6 +3,7 @@ import './LoginPopup.css'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../context/StoreContext';
 import axios from "axios";
+import { setUsetifulTags } from 'usetiful-sdk';
 
 const LoginPopup = ({setShowLogin}) => {
   const [currState, setCurrState] = useState('Login');
@@ -28,6 +29,9 @@ const LoginPopup = ({setShowLogin}) => {
     if(response.data.success){
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
+      setUsetifulTags({
+        userId: response.data.email,
+      })
       setShowLogin(false);
     }else{
       alert(response.data.message);
