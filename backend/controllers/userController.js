@@ -21,7 +21,7 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({success: false, message: "Invalid credentials"});
         }
         const token = createToken(user._id);
-        res.status(200).json({success: true, token});
+        res.status(200).json({success: true, token, email: email});
     }catch(err){
         console.log(err);
         res.status(500).json({success: false, message: "Internal Server Error"});
@@ -55,7 +55,7 @@ export const registerUser = async(req, res) => {
         });
         const user = await newUser.save();
         const token = createToken(user._id);
-        res.status(200).json({success:true, token});
+        res.status(200).json({success:true, token, email: email});
     }catch(error){
         console.log(error);
         res.status(500).json({success:false, message:"Internal Server Error"});
